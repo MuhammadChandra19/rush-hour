@@ -1,0 +1,28 @@
+{
+  "name": "rush-hour",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "turbo": "^2.3.3",
+    "typescript": "5.5.4"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "node": ">=21"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.4",
+    "@nestjs/core": "^11.0.4",
+    "@nestjs/platform-express": "^11.0.4",
+    "@nestjs/testing": "^11.0.1",
+    "@types/jest": "^29.5.14",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  }
+}
