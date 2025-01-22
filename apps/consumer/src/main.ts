@@ -21,4 +21,4 @@ async function bootstrap() {
   );
   await app.listen();
 }
-bootstrap();
+bootstrap().catch(console.error);
