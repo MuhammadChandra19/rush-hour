@@ -9,7 +9,8 @@ export class CacheCleanerController {
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   handleCron() {
-    this.logger.debug('Called every 10 seconds');
+    console.log('Called every 10 seconds');
+    this.logger.log('Called every 10 seconds');
     // this.service.cleanCache();
   }
 }
