@@ -15,14 +15,5 @@
   "packageManager": "pnpm@9.4.0",
   "engines": {
     "node": ">=21"
-  },
-  "dependencies": {
-    "@nestjs/common": "^11.0.4",
-    "@nestjs/core": "^11.0.4",
-    "@nestjs/platform-express": "^11.0.4",
-    "@nestjs/testing": "^11.0.1",
-    "@types/jest": "^29.5.14",
-    "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
   }
 }
