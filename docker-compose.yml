@@ -1,9 +1,25 @@
 version: '3'
 services:
+  mongodb:
+    image: mongo:latest
+    container_name: rush-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongo-data:/data/db
   redis:
     image: redis:6.2-alpine
     ports:
       - '6379:6379'
+  
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis-insight
+    ports:
+      - "8001:8001"
   kafka:
     image: confluentinc/cp-kafka:latest
     hostname: kafka
@@ -30,4 +46,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data:/var/lib/kafka/data  # Store Kafka logs on your local machine.
-#    entrypoint: ["sh", "-c", "kafka-server-start /etc/kafka/server.properties & sleep 10 && kafka-topics --create --topic BTC_USDT --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1 && tail -f /dev/null"]
+  kafka-drop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafka-drop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "localhost:9092"
+volumes:
+  mongo-data:

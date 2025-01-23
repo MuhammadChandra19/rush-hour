@@ -1,0 +1,25 @@
+{
+  "projects": {
+    "libs/repo": {
+      "type": "library",
+      "root": "libs/libs/repo",
+      "entryFile": "index",
+      "sourceRoot": "libs/libs/repo/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/libs/repo/tsconfig.lib.json"
+      }
+    },
+    "repo": {
+      "type": "library",
+      "root": "libs/repo",
+      "entryFile": "index",
+      "sourceRoot": "libs/repo/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/repo/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true
+  }
+}

@@ -1,10 +1,14 @@
 {
-  "name": "@rush-hour/mongodb_repo",
+  "name": "@rush-hour/repo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "build": "nest build"
   },
   "keywords": [],
   "author": "",
