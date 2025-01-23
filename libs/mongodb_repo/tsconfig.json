@@ -1,0 +1,7 @@
+{
+  "extends": "@rush-hour/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./",
+  }
+}

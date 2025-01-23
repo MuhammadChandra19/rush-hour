@@ -1,0 +1,24 @@
+{
+  "name": "@rush-hour/mongodb_repo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/common": "^11.0.4",
+    "mongodb": "^6.12.0"
+  },
+  "devDependencies": {
+    "@rush-hour/typescript-config": "workspace:*",
+    "ts-jest": "^29.2.5",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "@nest/testing": "^4.5.4",
+    "@nestjs/cli": "^11.0.0"
+  }
+}
