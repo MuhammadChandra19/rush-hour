@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IGameRepository } from './interface';
 import { CacheService } from 'src/service';
-import { Game } from '@rush-hour/types/game';
+import { Game, GameState } from '@rush-hour/types/game';
 
 // Constants
 const GAME_HASH_KEY = 'games'; // Key to store game hashes
@@ -64,7 +64,7 @@ export class GameRepository implements IGameRepository {
       id: gameData.id,
       boardID: gameData.boardID,
       board: JSON.parse(gameData.board),
-      state: gameData.state as 'Good' | 'Waste' | 'Blunder',
+      state: gameData.state as GameState,
       steps: JSON.parse(gameData.steps),
       updatedAt: new Date(gameData.updatedAt),
     };
