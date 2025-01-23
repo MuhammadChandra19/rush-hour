@@ -1,0 +1,28 @@
+{
+  "name": "@rush-hour/cache",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "nest build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/common": "^11.0.4",
+    "redis": "^4.7.0"
+  },
+  "devDependencies": {
+    "@nest/testing": "^4.5.4",
+    "@rush-hour/typescript-config": "workspace:*",
+    "@rush-hour/types": "workspace:*",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5"
+  }
+}

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { CacheCleanerModule } from './cache_cleaner/cache_cleaner.module';
+import { GameCronModule } from './game_cron/cache_cleaner.module';
 
 @Module({
-  imports: [CacheCleanerModule],
+  imports: [GameCronModule],
 })
 export class AppModule {}

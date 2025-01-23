@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CacheCleanerService } from './cache_cleaner.service';
+import { GameCronService } from './game_cron.service';
 
 describe('CacheCleanerService', () => {
-  let service: CacheCleanerService;
+  let service: GameCronService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CacheCleanerService],
+      providers: [GameCronService],
     }).compile();
 
-    service = module.get<CacheCleanerService>(CacheCleanerService);
+    service = module.get<GameCronService>(GameCronService);
   });
 
   it('should be defined', () => {

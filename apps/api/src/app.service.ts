@@ -5,7 +5,6 @@ import { BoardBody } from '@rush-hour/types/board';
 @Injectable()
 export class AppService {
   private readonly logger = new Logger(AppService.name);
-  z;
   constructor(private readonly boardRepository: IBoardRepository) {}
 
   getHello(): string {
