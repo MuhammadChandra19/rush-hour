@@ -3,6 +3,7 @@ import { ClientKafka } from '@nestjs/microservices';
 import { IGameRepository } from '@rush-hour/cache/dist';
 import { Board, IBoardRepository } from '@rush-hour/repo/dist';
 import { BoardBody } from '@rush-hour/types/board';
+import { GameSolverPayload } from '@rush-hour/types/game';
 
 @Injectable()
 export class AppService {
@@ -84,7 +85,7 @@ export class AppService {
     }
   }
 
-  async moveCar(gameID: string) {
+  async moveCar(gameID: string, board: BoardBody) {
     try {
       let solved = false;
       const result = await this.gameRepository.getGame(gameID);
@@ -94,7 +95,11 @@ export class AppService {
       }
 
       if (!solved) {
-        this.gameSolverClient.emit('game.move', gameID);
+        const game: GameSolverPayload = {
+          board,
+          gameID,
+        };
+        this.gameSolverClient.emit('game.move', JSON.stringify(game));
       }
 
       return solved;

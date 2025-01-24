@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateBoardRequest, BoardResponse } from './dto/board';
-import { GetGameResponse } from './dto/game';
-import { BoardBody } from '@rush-hour/types/board';
+import { GetGameResponse, UpdateGameRequest } from './dto/game';
 
 @Controller()
 export class AppController {
@@ -26,14 +25,14 @@ export class AppController {
       return {
         id: game.id,
         boardID: game.boardID,
-        board: game.board,
+        board: game.board.board,
         state: game.state || 'in-progress',
       };
     }
 
     return {
       id: '',
-      board: [] as unknown as BoardBody,
+      board: [],
       boardID: '',
       state: 'Unknown',
     };
@@ -49,8 +48,13 @@ export class AppController {
   }
 
   @Put('move-car/:id')
-  async moveCar(@Param('id') id: string): Promise<boolean> {
-    const isSolved = await this.appService.moveCar(id);
+  async moveCar(
+    @Param('id') id: string,
+    @Body() board: UpdateGameRequest,
+  ): Promise<boolean> {
+    const isSolved = await this.appService.moveCar(id, {
+      board: board.board,
+    });
     return isSolved || false;
   }
 }

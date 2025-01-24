@@ -21,3 +21,8 @@ export type Game = {
   steps: Step[];
   updatedAt: Date;
 };
+
+export type GameSolverPayload = {
+  gameID: string;
+  board: BoardBody;
+};

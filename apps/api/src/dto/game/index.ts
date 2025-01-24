@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BoardBody } from '@rush-hour/types/board';
 import { GameState } from '@rush-hour/types/game';
 
 export class GetGameResponse {
@@ -10,16 +9,13 @@ export class GetGameResponse {
   boardID: string;
 
   @ApiProperty({ description: '2D array of numbers' })
-  board: BoardBody;
+  board: number[][];
 
   @ApiProperty({ description: 'Game state' })
   state: GameState;
 }
 
 export class UpdateGameRequest {
-  @ApiProperty({ description: 'Game ID' })
-  id: string;
-
   @ApiProperty({ description: '2D array of numbers' })
-  board: BoardBody;
+  board: number[][];
 }
