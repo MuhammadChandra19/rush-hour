@@ -5,11 +5,8 @@ import { MongoClient, Db } from 'mongodb';
 export class MongoService implements OnModuleInit, OnModuleDestroy {
   private client: MongoClient;
   private db: Db;
-
-  constructor(
-    private readonly uri: string,
-    private readonly dbName: string
-  ) {}
+  private uri = 'mongodb://root:root@localhost:27017';
+  private dbName = 'my-database';
 
   async onModuleInit(): Promise<void> {
     this.client = new MongoClient(this.uri);

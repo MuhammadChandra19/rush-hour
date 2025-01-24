@@ -4,10 +4,9 @@ import { createClient, RedisClientType } from 'redis';
 @Injectable()
 export class CacheService implements OnModuleInit, OnModuleDestroy {
   private client: RedisClientType;
-  constructor(private readonly uri: string) {}
 
   async onModuleInit() {
-    this.client = createClient({ url: this.uri });
+    this.client = createClient({ url: 'redis://localhost:6379' });
     await this.client.connect();
   }
 

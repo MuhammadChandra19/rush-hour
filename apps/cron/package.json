@@ -24,6 +24,7 @@
     "@nestjs/microservices": "^11.0.4",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^5.0.0",
+    "@rush-hour/cache": "workspace:*",
     "kafkajs": "^2.2.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"

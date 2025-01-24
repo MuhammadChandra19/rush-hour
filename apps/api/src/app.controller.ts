@@ -1,21 +1,18 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateBoardRequest, BoardResponse } from './dto/board';
+import { GetGameResponse } from './dto/game';
+import { BoardBody } from '@rush-hour/types/board';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
   @Post('create-game')
   async createGame(
     @Body() boardBody: CreateBoardRequest,
   ): Promise<BoardResponse> {
-    const id = (await this.appService.createGame(boardBody)) as string;
+    const id = (await this.appService.createBoard(boardBody)) as string;
     return {
       id,
       ...boardBody,
@@ -23,18 +20,37 @@ export class AppController {
   }
 
   @Get('game/:id')
-  async getGame(@Param('id') id: string): Promise<BoardResponse> {
-    const board = await this.appService.getGame(id);
-    if (board) {
+  async getGame(@Param('id') id: string): Promise<GetGameResponse> {
+    const game = await this.appService.getGame(id);
+    if (game) {
       return {
-        id: board._id?.toHexString() || '',
-        board: board.board || [],
+        id: game.id,
+        boardID: game.boardID,
+        board: game.board,
+        state: game.state || 'in-progress',
       };
     }
 
     return {
       id: '',
-      board: [],
+      board: [] as unknown as BoardBody,
+      boardID: '',
+      state: 'Unknown',
     };
+  }
+
+  @Post('start-game/:id')
+  async startGame(@Param('id') id: string): Promise<string> {
+    const gameID = await this.appService.startGame(id);
+    if (!gameID) {
+      return 'board not found';
+    }
+    return gameID;
+  }
+
+  @Put('move-car/:id')
+  async moveCar(@Param('id') id: string): Promise<boolean> {
+    const isSolved = await this.appService.moveCar(id);
+    return isSolved || false;
   }
 }
