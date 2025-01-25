@@ -11,15 +11,20 @@ services:
     volumes:
       - mongo-data:/data/db
   redis:
-    image: redis:6.2-alpine
+    image: redis:7-alpine
+    restart: always
     ports:
-      - '6379:6379'
-  
+      - "6379:6379"
+
   redis-insight:
-    image: redislabs/redisinsight:latest
-    container_name: redis-insight
+    image: redis/redisinsight:latest
+    restart: always
     ports:
       - "5540:5540"
+    volumes:
+      - redis-insight:/data
+
+
   kafka:
     image: confluentinc/cp-kafka:latest
     hostname: kafka
@@ -52,6 +57,9 @@ services:
     ports:
       - "9000:9000"
     environment:
-      KAFKA_BROKERCONNECT: "localhost:9092"
+      KAFKA_BROKERCONNECT: "kafka:9092"
+    depends_on:
+      - kafka
 volumes:
   mongo-data:
+  redis-insight:

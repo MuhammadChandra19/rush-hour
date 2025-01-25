@@ -66,10 +66,11 @@ export class AppService {
       await this.gameRepository.addOrUpdateGame({
         boardID,
         board,
-        state: 'Unknown',
+        moveType: 'Unknown',
         id: gameID,
         steps: [],
         updatedAt: new Date(),
+        isSolved: false,
       });
 
       return gameID;

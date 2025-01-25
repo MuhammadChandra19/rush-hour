@@ -44,4 +44,12 @@ export class BoardRepository implements IBoardRepository {
       return null;
     }
   }
+
+  async updateOne(id: string, document: Board): Promise<void> {
+    try {
+      this.collection.updateOne({ _id: new ObjectId(id) }, { $set: document });
+    } catch (error: unknown) {
+      this.logger.error(`Error occurred: ${error}`);
+    }
+  }
 }

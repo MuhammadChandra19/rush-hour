@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IGameRepository } from './interface';
 import { CacheService } from 'src/service';
-import { Game, GameState } from '@rush-hour/types/game';
+import { Game, MoveType } from '@rush-hour/types/game';
 
 // Constants
 const GAME_HASH_KEY = 'games'; // Key to store game hashes
@@ -25,7 +25,8 @@ export class GameRepository implements IGameRepository {
       id: game.id,
       boardID: game.boardID,
       board: JSON.stringify(game.board),
-      state: game.state,
+      state: game.moveType,
+      isSolved: `${game.isSolved}`,
       steps: JSON.stringify(game.steps),
       updatedAt: game.updatedAt.toISOString(),
     });
@@ -64,8 +65,9 @@ export class GameRepository implements IGameRepository {
       id: gameData.id,
       boardID: gameData.boardID,
       board: JSON.parse(gameData.board),
-      state: gameData.state as GameState,
+      moveType: gameData.state as MoveType,
       steps: JSON.parse(gameData.steps),
+      isSolved: gameData.isSolved === 'true',
       updatedAt: new Date(gameData.updatedAt),
     };
 

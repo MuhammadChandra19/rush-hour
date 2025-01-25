@@ -26,7 +26,7 @@ export class AppController {
         id: game.id,
         boardID: game.boardID,
         board: game.board.board,
-        state: game.state || 'in-progress',
+        state: game.moveType,
       };
     }
 

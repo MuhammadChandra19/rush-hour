@@ -1,14 +1,14 @@
 import { BoardBody } from '../board';
 
-export type GameState = 'Unknown' | 'Good' | 'Waste' | 'Blunder';
-enum MovementDirection {
+export type MoveType = 'Unknown' | 'Good' | 'Waste' | 'Blunder';
+export enum MovementDirection {
   Up,
   Right,
   Down,
   Left,
 }
 
-interface Step {
+export interface Step {
   carId: number;
   direction: MovementDirection;
 }
@@ -17,8 +17,9 @@ export type Game = {
   id: string;
   boardID: string;
   board: BoardBody;
-  state: GameState;
+  moveType: MoveType;
   steps: Step[];
+  isSolved: boolean;
   updatedAt: Date;
 };
 
