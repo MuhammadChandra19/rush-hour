@@ -1,5 +1,59 @@
 version: '3'
 services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    expose:
+      - "8888"
+    ports:
+      - "8888:8888"
+    environment:
+      BROKERS: broker:29092
+      REDIS_URL: redis://redis:6379
+      DB_PATH: mongodb://root:root@rush-db:27017
+      DB_NAME: my-database
+    networks:
+      - app-network
+    depends_on:
+      - mongodb
+  
+  consumer:
+    container_name: consumer
+    build:
+      context: .
+      dockerfile: ./apps/consumer/Dockerfile
+    ports:
+      - 8889:8889
+    environment:
+      BROKERS: broker:29092
+      REDIS_URL: redis://redis:6379
+      DB_PATH: mongodb://root:root@rush-db:27017
+      DB_NAME: my-database
+    networks:
+      - app-network
+    depends_on:
+      - broker
+      - mongodb
+    restart: on-failure
+    
+      
+  cron:
+    container_name: cron
+    build:
+      context: .
+      dockerfile: ./apps/cron/Dockerfile
+    ports:
+      - 8890:8890
+    environment:
+      BROKERS: broker:29092
+      REDIS_URL: redis://redis:6379
+      DB_PATH: mongodb://root:root@rush-db:27017
+      DB_NAME: my-database
+    networks:
+      - app-network
+      
   mongodb:
     image: mongo:latest
     container_name: rush-db
@@ -10,10 +64,14 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
       - mongo-data:/data/db
+    networks:
+      - app-network
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    networks:
+      - app-network
 
   redis-insight:
     image: redis/redisinsight:latest
@@ -21,58 +79,54 @@ services:
       - "5540:5540"
     volumes:
       - redis-insight:/data
-
-  zookeeper:
-    image: wurstmeister/zookeeper:latest
-    # NOTE: feel free to tune the resource
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 200M
-        reservations:
-          cpus: '0.5'
-          memory: 200M
-    ports:
-      - "2181:2181"
-
-  kafka:
-    image: wurstmeister/kafka:latest
-    # NOTE: feel free to tune the resource
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 500M
-        reservations:
-          cpus: '0.5'
-          memory: 500M
-    ports:
-      - "9092:9092"
+    networks:
+      - app-network
+  
+  broker:
+    image: apache/kafka:latest
+    container_name: broker
     environment:
-      KAFKA_LISTENERS: LISTENER_DOCKER://:29092,LISTENER_EXTERNAL://:9092
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_EXTERNAL://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - zookeeper
-
-  kafdrop:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller               # The node acts as both broker and controller
+      KAFKA_LISTENERS:  LISTENER_DOCKER://:29092,PLAINTEXT://:9092,CONTROLLER://localhost:9093  # Ports for broker and controller
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER://broker:29092,PLAINTEXT://localhost:9092                  # External listener for clients
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER         # Listener name for inter-controller communication
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:  LISTENER_DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT  # Security protocol for listeners
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093    # Quorum voters for the controller in KRaft mode
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1           # Replication factor for the offsets topic
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1   # Replication factor for transaction logs
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1              # Minimum in-sync replicas for transactional logs
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0           # Initial delay before consumer group rebalancing
+      KAFKA_NUM_PARTITIONS: 3                             # Default number of partitions for new topics
+    ports:
+      - "9092:9092"     # Port for Kafka broker
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "./opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - app-network
+  kafka-drop:
     image: obsidiandynamics/kafdrop:latest
+    container_name: kafka-drop
     ports:
       - "9000:9000"
     environment:
-      ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_BROKERCONNECT: kafka:29092
+      KAFKA_BROKERCONNECT: "broker:29092"
       JVM_OPTS: "-Xms32M -Xmx64M"
       SERVER_SERVLET_CONTEXTPATH: "/"
     depends_on:
-      - kafka
+      - broker
+    networks:
+      - app-network
 volumes:
   mongo-data:
   redis-insight:
+  kafka-data:
 networks:
-  redisnet:
+  app-network:

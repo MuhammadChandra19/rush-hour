@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Partitioners } from 'kafkajs';
 import {
   MongoService,
   BoardRepository,
@@ -12,22 +13,33 @@ import {
   IGameRepository,
 } from '@rush-hour/cache/dist';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { appConfig } from './config/app.config';
 
 @Module({
   imports: [
-    ClientsModule.register([
+    ConfigModule.forRoot({ isGlobal: true, load: [appConfig] }),
+    ClientsModule.registerAsync([
       {
         name: 'GAME_SOLVER',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'game.solver',
-            brokers: ['localhost:9092'],
+        imports: [ConfigModule],
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.KAFKA,
+          options: {
+            producer: {
+              allowAutoTopicCreation: true,
+              createPartitioner: Partitioners.DefaultPartitioner,
+            },
+            client: {
+              clientId: 'game.solver',
+              brokers: config.get<string[]>('app.brokers') as string[],
+            },
+            consumer: {
+              groupId: 'game.solver.consumer',
+            },
           },
-          consumer: {
-            groupId: 'game.solver.consumer',
-          },
-        },
+        }),
+        inject: [ConfigService],
       },
     ]),
   ],

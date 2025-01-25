@@ -10,7 +10,6 @@ export class GameCronController {
   @Cron(CronExpression.EVERY_10_SECONDS)
   handleCron() {
     this.logger.log('starting delete cache');
-    // this.service.cleanCache();
     this.service.cleanGameCache().catch((e) => this.logger.log(e));
   }
 }

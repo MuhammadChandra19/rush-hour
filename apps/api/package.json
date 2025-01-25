@@ -21,12 +21,14 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.0.4",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.0.2",
     "@rush-hour/cache": "workspace:*",
     "@rush-hour/repo": "workspace:*",
+    "kafkajs": "^2.2.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -75,5 +77,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "node": ">=20"
   }
 }

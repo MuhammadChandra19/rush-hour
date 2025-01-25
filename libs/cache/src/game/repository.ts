@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IGameRepository } from './interface';
-import { CacheService } from 'src/service';
+import { CacheService } from '../service';
 import { Game, MoveType } from '@rush-hour/types/game';
 
 // Constants

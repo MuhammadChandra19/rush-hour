@@ -20,11 +20,14 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.0.4",
     "@nestjs/platform-express": "^11.0.1",
     "@rush-hour/cache": "workspace:*",
     "@rush-hour/repo": "workspace:*",
+    "@rush-hour/types": "workspace:*",
+    "dotenv": "^16.4.7",
     "kafkajs": "^2.2.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
@@ -36,7 +39,6 @@
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
     "@rush-hour/typescript-config": "workspace:*",
-    "@rush-hour/types": "workspace:*",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.7",
     "@types/express": "^5.0.0",

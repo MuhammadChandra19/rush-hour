@@ -1,8 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 async function bootstrap() {
+  if (!process.env.BROKERS) {
+    throw new Error('BROKERS environment variable is required');
+  }
+
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
@@ -10,7 +16,10 @@ async function bootstrap() {
       options: {
         client: {
           clientId: `consumer-${Math.random()}`,
-          brokers: ['localhost:9092'],
+          brokers: process.env.BROKERS?.split(',') || ['localhost:9092'],
+          retry: {
+            retries: 4,
+          },
         },
         consumer: {
           allowAutoTopicCreation: true,
@@ -19,6 +28,7 @@ async function bootstrap() {
       },
     },
   );
+  app.enableShutdownHooks();
   await app.listen();
 }
 bootstrap().catch(console.error);
