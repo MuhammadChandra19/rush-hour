@@ -20,7 +20,7 @@ export class GameRepository implements IGameRepository {
 
   async addOrUpdateGame(game: Game): Promise<void> {
     const gameKey = `${GAME_HASH_KEY}:${game.id}`;
-
+    game.updatedAt = new Date();
     await this.client.hSet(gameKey, {
       id: game.id,
       boardID: game.boardID,

@@ -88,14 +88,8 @@ export class AppService {
 
   async moveCar(gameID: string, board: BoardBody) {
     try {
-      let solved = false;
       const result = await this.gameRepository.getGame(gameID);
-      if (result) {
-        const board = await this.boardRepository.findOne(result.boardID);
-        solved = board?.isSolved || false;
-      }
-
-      if (!solved) {
+      if (result && !result.isSolved) {
         const game: GameSolverPayload = {
           board,
           gameID,
@@ -103,7 +97,7 @@ export class AppService {
         this.gameSolverClient.emit('game.move', JSON.stringify(game));
       }
 
-      return solved;
+      return result?.isSolved;
     } catch (error: unknown) {
       // Explicitly type error as `unknown`
       if (error instanceof Error) {
