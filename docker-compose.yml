@@ -38,7 +38,6 @@ services:
       - mongodb
     restart: on-failure
     
-      
   cron:
     container_name: cron
     build:
@@ -83,50 +82,50 @@ services:
       - app-network
   
   broker:
-    image: apache/kafka:latest
-    container_name: broker
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker,controller               # The node acts as both broker and controller
-      KAFKA_LISTENERS:  LISTENER_DOCKER://:29092,PLAINTEXT://:9092,CONTROLLER://localhost:9093  # Ports for broker and controller
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER://broker:29092,PLAINTEXT://localhost:9092                  # External listener for clients
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER         # Listener name for inter-controller communication
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:  LISTENER_DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT  # Security protocol for listeners
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093    # Quorum voters for the controller in KRaft mode
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1           # Replication factor for the offsets topic
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1   # Replication factor for transaction logs
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1              # Minimum in-sync replicas for transactional logs
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0           # Initial delay before consumer group rebalancing
-      KAFKA_NUM_PARTITIONS: 3                             # Default number of partitions for new topics
+    image: docker.io/bitnami/kafka:3.4
+    hostname: broker
     ports:
-      - "9092:9092"     # Port for Kafka broker
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "./opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1",
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 5
+      - "9092:9092"
+      - "9094:9094"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=LISTENER_DOCKER://:29092,PLAINTEXT://:9092,CONTROLLER://localhost:9093 
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=LISTENER_DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT 
+      - KAFKA_CFG_ADVERTISED_LISTENERS=LISTENER_DOCKER://broker:29092,PLAINTEXT://localhost:9092  
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - BITNAMI_DEBUG=yes
+      - KAFKA_CFG_NUM_PARTITIONS=2
+    extra_hosts:
+      - "localhost: 127.0.0.1"
+
+
     networks:
       - app-network
-  kafka-drop:
-    image: obsidiandynamics/kafdrop:latest
-    container_name: kafka-drop
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
     ports:
-      - "9000:9000"
+    - 8080:8080
     environment:
-      KAFKA_BROKERCONNECT: "broker:29092"
-      JVM_OPTS: "-Xms32M -Xmx64M"
-      SERVER_SERVLET_CONTEXTPATH: "/"
-    depends_on:
-      - broker
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      LOGGING_LEVEL_ROOT: 'DEBUG'
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
+    extra_hosts:
+    - "localhost: 127.0.0.1"
     networks:
-      - app-network
+    - app-network
 volumes:
   mongo-data:
   redis-insight:
-  kafka-data:
+  kafka_data:
 networks:
   app-network:
