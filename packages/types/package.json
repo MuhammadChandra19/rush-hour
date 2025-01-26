@@ -2,10 +2,20 @@
   "name": "@rush-hour/types",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "build": "tsc"
   },
+  "exports": {
+    "./board": {
+      "types": "./board/index.ts",
+      "default": "./dist/board/index.js"
+    },
+    "./game": {
+      "types": "./game/index.ts",
+      "default": "./dist/game/index.js"
+    }
+  },
+
   "keywords": [],
   "author": "",
   "license": "ISC",

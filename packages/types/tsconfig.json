@@ -5,4 +5,5 @@
     "baseUrl": "./",
   },
   "include": ["board/**/*", "game/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

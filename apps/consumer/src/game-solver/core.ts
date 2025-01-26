@@ -1,4 +1,4 @@
-import { MovementDirection, Step } from '@rush-hour/types/dist/game';
+import { MovementDirection, Step } from '@rush-hour/types/game';
 
 export default class RushHourSolver {
   private rows: number = 6;
