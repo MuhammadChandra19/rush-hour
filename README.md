@@ -72,9 +72,7 @@ Ensure you have the following installed:
 
 ### Handling Consumer Startup
 On the first run, the Consumer microservice may fail due to missing Kafka topics. Restart the Consumer after the initial startup:
-```bash
-pnpm run dev --filter consumer
-```
+
 
 ---
 
