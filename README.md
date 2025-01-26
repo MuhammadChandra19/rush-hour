@@ -43,7 +43,7 @@ Ensure you have the following installed:
 
 ## Getting Started
 
-### Development Setup
+### Development Setup (Docker)
 1. **Start Docker Services**:
    To run Redis, Kafka, and MongoDB for development:
    ```bash
@@ -61,14 +61,24 @@ Ensure you have the following installed:
    ```
    This will start all three microservices.
 
-4. **Monitor Services** (Optional):
+---
+
+### Development Setup (Tilt)
+1. **Monitor Services** (Optional):
    If Tilt is installed, you can run:
    ```bash
    tilt up
    ```
    This provides a dashboard to monitor all services, including Docker.
+   ![Alt text](./assets/tilt-run.png)
 
----
+
+### Development Setup (Production)
+1. **Start Docker Services**:
+  To the microservices in production mode
+    ```bash
+      docker-compose up -d
+    ```
 
 ### Handling Consumer Startup
 On the first run, the Consumer microservice may fail due to missing Kafka topics. Restart the Consumer after the initial startup:
