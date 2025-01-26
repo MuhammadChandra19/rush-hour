@@ -6,6 +6,9 @@
     "build:api": "turbo run build -F api...",
     "build:cron": "turbo run build -F cron...",
     "build:consumer": "turbo run build -F consumer...",
+    "run:api": "turbo run dev -F api...",
+    "run:cron": "turbo run dev -F cron...",
+    "run:consumer": "turbo run dev -F consumer...",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""

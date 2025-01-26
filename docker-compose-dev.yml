@@ -1,0 +1,78 @@
+version: '3'
+services:      
+  mongodb:
+    image: mongo:latest
+    container_name: rush-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  redis-insight:
+    image: redis/redisinsight:latest
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis-insight:/data
+    networks:
+      - app-network
+  
+  broker:
+    image: docker.io/bitnami/kafka:3.4
+    hostname: broker
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=LISTENER_DOCKER://:29092,PLAINTEXT://:9092,CONTROLLER://localhost:9093 
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=LISTENER_DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT 
+      - KAFKA_CFG_ADVERTISED_LISTENERS=LISTENER_DOCKER://broker:29092,PLAINTEXT://localhost:9092  
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - BITNAMI_DEBUG=yes
+      - KAFKA_CFG_NUM_PARTITIONS=2
+    extra_hosts:
+      - "localhost: 127.0.0.1"
+
+
+    networks:
+      - app-network
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+    - 8080:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      LOGGING_LEVEL_ROOT: 'DEBUG'
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
+    extra_hosts:
+    - "localhost: 127.0.0.1"
+    networks:
+    - app-network
+volumes:
+  mongo-data:
+  redis-insight:
+  kafka_data:
+networks:
+  app-network:
