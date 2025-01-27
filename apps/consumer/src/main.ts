@@ -5,10 +5,6 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 async function bootstrap() {
-  if (!process.env.BROKERS) {
-    throw new Error('BROKERS environment variable is required');
-  }
-
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
