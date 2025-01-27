@@ -129,7 +129,7 @@ describe('AppService', () => {
 
       const result = await appService.startGame('board-1');
 
-      expect(result).toEqual('board-1-game');
+      expect(result?.gameID).toEqual('board-1-game');
       expect(boardRepositoryMock.findOne).toHaveBeenCalledWith('board-1');
       expect(gameRepositoryMock.addOrUpdateGame).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -145,7 +145,7 @@ describe('AppService', () => {
 
       const result = await appService.startGame('board-1');
 
-      expect(result).toEqual('');
+      expect(result).toEqual({});
       expect(boardRepositoryMock.findOne).toHaveBeenCalledWith('board-1');
     });
   });

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IGameRepository } from '@rush-hour/cache/dist';
 import { IBoardRepository } from '@rush-hour/repo/dist';
-import { GameSolverPayload } from '@rush-hour/types/game';
+import { Game, GameSolverPayload, MoveType, Step } from '@rush-hour/types/game';
 import RushHourSolver from './core';
 
 @Injectable()
@@ -15,7 +15,6 @@ export class GameSolverService {
   async calculatePlayerMove(payload: GameSolverPayload) {
     try {
       const game = await this.gameRepo.getGame(payload.gameID);
-
       if (!game) {
         return;
       }
@@ -25,26 +24,52 @@ export class GameSolverService {
         return;
       }
 
-      const solver = new RushHourSolver(payload.board.board);
-      const steps = solver.solve();
+      const { isSolved, moveType, steps } = this.caculatePlayerStep(
+        payload.board.board,
+        game,
+      );
 
-      if (game.steps.length > steps.length) {
-        game.moveType = 'Good';
-      } else if (game.steps.length === steps.length) {
-        game.moveType = 'Waste';
-      } else {
-        game.moveType = 'Blunder';
-      }
-      const isSolved = solver.isSolved(payload.board.board);
       board.isSolved = isSolved;
+      game.moveType = moveType;
       game.isSolved = isSolved;
       game.steps = steps;
-      console.log(steps);
 
       await this.boardRepo.updateOne(game.boardID, board);
       await this.gameRepo.addOrUpdateGame(game);
     } catch (e) {
       this.logger.error(e);
     }
+  }
+
+  private caculatePlayerStep(
+    playerBoard: number[][],
+    game: Game,
+  ): { moveType: MoveType; isSolved: boolean; steps: Step[] } {
+    const playerGame = new RushHourSolver(playerBoard);
+    const playerSteps = playerGame.solve();
+
+    const board = new RushHourSolver(game.board.board);
+    const actualSteps = board.solve();
+
+    let comparedSteps: Step[];
+    let moveType: MoveType;
+
+    if (game.moveType === 'Unknown') {
+      comparedSteps = actualSteps;
+    }
+
+    if (game.steps.length > playerSteps.length) {
+      moveType = 'Good';
+    } else if (game.steps.length === playerSteps.length) {
+      moveType = 'Waste';
+    } else {
+      moveType = 'Blunder';
+    }
+
+    return {
+      moveType,
+      isSolved: playerGame.isSolved(playerBoard),
+      steps: playerSteps,
+    };
   }
 }

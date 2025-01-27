@@ -60,7 +60,7 @@ export class AppService {
     try {
       const board = await this.boardRepository.findOne(boardID);
       if (!board) {
-        return '';
+        return {};
       }
       const gameID = `${boardID}-game`;
       await this.gameRepository.addOrUpdateGame({
@@ -73,7 +73,7 @@ export class AppService {
         isSolved: false,
       });
 
-      return gameID;
+      return { gameID, board: board.board };
     } catch (error: unknown) {
       // Explicitly type error as `unknown`
       if (error instanceof Error) {

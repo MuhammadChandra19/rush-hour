@@ -19,3 +19,21 @@ export class UpdateGameRequest {
   @ApiProperty({ description: '2D array of numbers' })
   board: number[][];
 }
+
+export class StartGameResponse {
+  @ApiProperty({ description: 'Game ID' })
+  id: string;
+
+  @ApiProperty({
+    description: 'Board',
+    default: [
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+    ],
+  })
+  board: number[][];
+}

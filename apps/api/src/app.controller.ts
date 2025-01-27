@@ -1,7 +1,11 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateBoardRequest, BoardResponse } from './dto/board';
-import { GetGameResponse, UpdateGameRequest } from './dto/game';
+import {
+  GetGameResponse,
+  StartGameResponse,
+  UpdateGameRequest,
+} from './dto/game';
 
 @Controller()
 export class AppController {
@@ -16,6 +20,31 @@ export class AppController {
       id,
       ...boardBody,
     };
+  }
+
+  @Post('start-game/:boardID')
+  async startGame(
+    @Param('boardID') boardID: string,
+  ): Promise<StartGameResponse> {
+    const game = await this.appService.startGame(boardID);
+    if (!game) {
+      return { board: [], id: '' };
+    }
+    return {
+      board: game.board!,
+      id: game.gameID!,
+    };
+  }
+
+  @Put('move-car/:gameID')
+  async moveCar(
+    @Param('gameID') gameID: string,
+    @Body() board: UpdateGameRequest,
+  ): Promise<boolean> {
+    const isSolved = await this.appService.moveCar(gameID, {
+      board: board.board,
+    });
+    return isSolved || false;
   }
 
   @Get('game/:id')
@@ -36,25 +65,5 @@ export class AppController {
       boardID: '',
       state: 'Unknown',
     };
-  }
-
-  @Post('start-game/:id')
-  async startGame(@Param('id') id: string): Promise<string> {
-    const gameID = await this.appService.startGame(id);
-    if (!gameID) {
-      return 'board not found';
-    }
-    return gameID;
-  }
-
-  @Put('move-car/:id')
-  async moveCar(
-    @Param('id') id: string,
-    @Body() board: UpdateGameRequest,
-  ): Promise<boolean> {
-    const isSolved = await this.appService.moveCar(id, {
-      board: board.board,
-    });
-    return isSolved || false;
   }
 }

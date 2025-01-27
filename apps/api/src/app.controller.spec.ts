@@ -101,20 +101,22 @@ describe('AppController', () => {
 
   describe('startGame', () => {
     it('should return game ID when game starts successfully', async () => {
-      jest.spyOn(appService, 'startGame').mockResolvedValue('game-123');
+      jest
+        .spyOn(appService, 'startGame')
+        .mockResolvedValue({ board: [[1], [1]], gameID: 'game-123' });
 
       const result = await appController.startGame('board-1');
 
-      expect(result).toEqual('game-123');
+      expect(result.id).toEqual('game-123');
       expect(appService.startGame).toHaveBeenCalledWith('board-1');
     });
 
     it('should return error message when board is not found', async () => {
-      jest.spyOn(appService, 'startGame').mockResolvedValue('');
+      jest.spyOn(appService, 'startGame').mockResolvedValue({});
 
       const result = await appController.startGame('board-1');
 
-      expect(result).toEqual('board not found');
+      expect(result).toEqual({});
       expect(appService.startGame).toHaveBeenCalledWith('board-1');
     });
   });
